@@ -186,7 +186,11 @@ export function addChat(m) {
   if (atBottom) log.scrollTop = log.scrollHeight;
 }
 
+let lastToast = { text: '', at: 0 };
 export function toast(text, kind = 'info') {
+  const now = Date.now();
+  if (text === lastToast.text && now - lastToast.at < 1500) return;
+  lastToast = { text, at: now };
   const el = document.createElement('div');
   el.className = 'toast ' + kind;
   el.textContent = text;
@@ -707,6 +711,10 @@ function doAction(act, el) {
     case 'kfest': return send({ t: 'pol', a: 'festival' });
     case 'kappoint': return send({ t: 'pol', a: 'appoint', name: val('kguard') });
     case 'kdismiss': return send({ t: 'pol', a: 'dismiss', name: b });
-    case 'kabdicate': if (confirm('Abdicar do trono? Novas eleições começarão.')) send({ t: 'pol', a: 'abdicate' }); return;
+    case 'kabdicate':
+      if (el.dataset.confirm) return send({ t: 'pol', a: 'abdicate' });
+      el.dataset.confirm = '1';
+      el.textContent = 'Clique de novo para abdicar';
+      return;
   }
 }

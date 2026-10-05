@@ -228,7 +228,7 @@ function cast(ab) {
   const A = S.defs.abilities[ab];
   let tg = S.target;
   if ((A.kind === 'dmg' || (A.kind === 'aoe' && !A.self)) && (!tg || !S.mobs.has(tg))) {
-    const m = nearestEnemy(A.range + 1);
+    const m = nearestEnemy(Math.max(A.range + 1, 12));
     if (m) { S.target = m.id; tg = m.id; }
   }
   send({ t: 'cast', ab, tg });

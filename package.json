@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "ELECTION_FAST=1 node server/index.js",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "build:standalone": "node scripts/build-standalone.js"
   },
   "engines": { "node": ">=18" },
   "dependencies": {
