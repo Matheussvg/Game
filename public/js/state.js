@@ -4,7 +4,7 @@ export const S = {
   players: new Map(), mobs: new Map(), nodes: new Map(),
   x: 0, y: 0, dir: 0, moving: false,
   target: null, keys: {},
-  fx: [], texts: [], bubbles: new Map(),
+  fx: [], texts: [], bubbles: new Map(), attackAt: new Map(),
   pol: null, polAt: 0, mkt: null, jobs: null, trade: null,
   panel: null, panelArg: null, panelTab: null,
   zoneKey: null, time: 0,

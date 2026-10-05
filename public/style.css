@@ -37,8 +37,10 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--g
 .cls { border: 2px solid #4a3a22; border-radius: 8px; padding: 10px; cursor: pointer; background: var(--panel2); text-align: left; transition: transform .1s; }
 .cls:hover { transform: translateY(-2px); border-color: var(--border); }
 .cls.sel { border-color: var(--gold); box-shadow: 0 0 14px rgba(240,192,80,.4); }
+.cls .portrait { float: right; margin: -2px 0 0 6px; }
+.cls .portrait canvas { width: 60px; height: 90px; image-rendering: pixelated; display: block; }
 .cls h3 { margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
-.cls .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid #000; }
+.cls .dot { flex-shrink: 0; width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid #000; }
 .cls p { margin: 0 0 6px; font-size: 12px; color: var(--muted); }
 .cls .abs { font-size: 18px; letter-spacing: 3px; }
 .err { color: var(--red); min-height: 20px; margin-top: 8px; }

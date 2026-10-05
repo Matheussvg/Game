@@ -49,7 +49,7 @@ function convertClient(name, src) {
   return `__mods.${name} = (function () {\n${src}\nreturn { ${exported.join(', ')} };\n})();\n`;
 }
 let clientJs = 'const __mods = {};\n';
-for (const m of ['state', 'render', 'ui', 'main']) clientJs += convertClient(m, read(`public/js/${m}.js`));
+for (const m of ['state', 'sprites', 'render', 'ui', 'main']) clientJs += convertClient(m, read(`public/js/${m}.js`));
 
 // ---- Ponte servidor ↔ cliente ----
 const bridge = `

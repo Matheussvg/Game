@@ -57,6 +57,8 @@ Comandos de chat: `/w nome msg`, `/pagar nome qtd`, `/dar nome item qtd`, `/quem
 
 ## Classes
 
+Cada classe tem um sprite próprio em pixel art (4 direções, caminhada e ataque), desenhado por código em `public/js/sprites.js`. Abra `/sprites.html` com o servidor rodando para ver todos os quadros.
+
 | Classe | Papel | Habilidades |
 |---|---|---|
 | **Guerreiro** | Corpo a corpo, resistente | Golpe Heroico, Investida (atordoa), Redemoinho (área), Grito de Batalha |
@@ -106,6 +108,7 @@ server/
 public/
   index.html, style.css
   js/main.js    login, rede, entrada, previsão de movimento
+  js/sprites.js sprites em pixel art das classes
   js/render.js  renderização (tiles e sprites procedurais, efeitos, minimapa)
   js/ui.js      HUD e painéis
 test/

@@ -1,5 +1,6 @@
 // Renderização do mundo em canvas 2D (tiles procedurais, entidades, efeitos).
-import { S, T, tileAt, zoneAt } from './state.js';
+import { S, T } from './state.js';
+import { getSprite, walkFrame } from './sprites.js';
 
 const TS = 32;
 let cv, ctx, W = 0, H = 0, dpr = 1;
@@ -506,20 +507,26 @@ export function render() {
   }
 
   // Jogadores
+  const nowMs = performance.now();
   const drawPlayer = (p, sx, sy, me) => {
     const C = S.defs.classes[p.cls];
     if (tgt === p.id) ring(sx, sy, '#40e070');
-    const bob = p.moving ? Math.abs(Math.sin(S.time * 11)) * 2 : 0;
-    drawHumanoid(sx, sy, {
-      color: C.color, dir: p.dir, bob, weapon: C.weapon, crown: p.flags & 1, alpha: p.flags & 4 ? 0.35 : 1,
-      orb: p.cls === 'sacerdote' ? '#fff3a0' : '#7fd0ff', glow: p.flags & 2 ? 'rgba(80,150,255,.12)' : null,
-    });
+    const attacking = (S.attackAt.get(p.id) || 0) > nowMs;
+    const frame = attacking ? 3 : p.moving ? walkFrame(S.time + (p.id.length % 3) * 0.13) : 0;
+    const spr = getSprite(p.cls, p.dir || 0, frame);
+    ctx.save();
+    if (p.flags & 4) ctx.globalAlpha = 0.35;
+    shadow(sx, sy + 10, 11);
+    if (p.flags & 2) { ctx.fillStyle = 'rgba(80,150,255,.14)'; ctx.beginPath(); ctx.arc(sx, sy - 12, 24, 0, 7); ctx.fill(); }
+    if (p.flags & 1) { ctx.fillStyle = 'rgba(240,192,80,.14)'; ctx.beginPath(); ctx.arc(sx, sy - 12, 26, 0, 7); ctx.fill(); }
+    ctx.drawImage(spr, Math.round(sx - spr.width / 2), Math.round(sy + 12 - spr.height));
+    ctx.restore();
     const nameCol = p.flags & 1 ? '#f0c050' : p.flags & 2 ? '#80b8ff' : p.flags & 8 ? '#ffb070' : me ? '#ffffff' : '#c8e0ff';
     const tag = p.flags & 1 ? '👑 ' : p.flags & 2 ? '🛡️ ' : p.flags & 8 ? '🗳️ ' : '';
-    label(`${tag}${p.name}`, sx, sy - 32, nameCol, 12);
+    label(`${tag}${p.name}`, sx, sy - 60, nameCol, 12);
     const prof = p.prof ? S.defs.professions[p.prof] : null;
-    label(`Nv ${p.lv} ${C.name}${prof ? ' · ' + prof.name : ''}`, sx, sy - 20, '#d8d0c0', 10, false);
-    if (!me && p.hp < p.maxHp) hpBar(sx, sy - 44, 32, p.hp / p.maxHp, '#4fc36a');
+    label(`Nv ${p.lv} ${C.name}${prof ? ' · ' + prof.name : ''}`, sx, sy - 49, '#d8d0c0', 10, false);
+    if (!me && p.hp < p.maxHp) hpBar(sx, sy - 72, 32, p.hp / p.maxHp, '#4fc36a');
   };
   for (const p of S.players.values()) {
     if (p.id === S.myId) continue;
@@ -615,7 +622,7 @@ function drawFx(toSX, toSY) {
     const k = (now - t.t0) / t.dur;
     const e = t.at();
     ctx.globalAlpha = Math.min(1, 2 * (1 - k));
-    label(t.text, toSX(e.x) + t.ox, toSY(e.y) - 40 - k * 36, t.color, t.size);
+    label(t.text, toSX(e.x) + t.ox, toSY(e.y) - 52 - k * 36, t.color, t.size);
     ctx.globalAlpha = 1;
   }
   // Balões de fala
@@ -623,7 +630,7 @@ function drawFx(toSX, toSY) {
     if (now > b.until) { S.bubbles.delete(id); continue; }
     const e = b.at();
     if (!e) continue;
-    bubble(b.text, toSX(e.x), toSY(e.y) - 46);
+    bubble(b.text, toSX(e.x), toSY(e.y) - (S.players.has(id) ? 70 : 46));
   }
 }
 

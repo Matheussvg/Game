@@ -1,6 +1,7 @@
 // Entrada do cliente: login, rede, entrada do jogador e laço principal.
 import { S, send, blocked, dist, allNpcs, entityById, SPEED } from './state.js';
 import { initRender, render, screenToWorld } from './render.js';
+import { getSprite } from './sprites.js';
 import { initUI, updateHUD, renderPanel, addChat, toast, togglePanel, openPanel, closePanel, usePotionSlot } from './ui.js';
 
 const $ = id => document.getElementById(id);
@@ -14,9 +15,16 @@ async function setupLogin() {
     const r = await fetch('/api/classes');
     const { classes, abilities, online } = await r.json();
     $('classes').innerHTML = Object.entries(classes).map(([k, c]) => `
-      <div class="cls" data-cls="${k}"><h3><span class="dot" style="background:${c.color}"></span>${c.name}</h3>
+      <div class="cls" data-cls="${k}"><div class="portrait" data-portrait="${k}"></div><h3><span class="dot" style="background:${c.color}"></span>${c.name}</h3>
       <p>${c.desc}</p><p>Vida ${c.hp} · ${c.resource} ${c.mana}</p>
       <div class="abs" title="${c.abilities.map(a => abilities[a].name).join(', ')}">${c.abilities.map(a => abilities[a].icon).join('')}</div></div>`).join('');
+    document.querySelectorAll('[data-portrait]').forEach(el => {
+      const spr = getSprite(el.dataset.portrait, 0, 0);
+      const c = document.createElement('canvas');
+      c.width = spr.width; c.height = spr.height;
+      c.getContext('2d').drawImage(spr, 0, 0);
+      el.appendChild(c);
+    });
     document.querySelectorAll('.cls').forEach(el => el.addEventListener('click', () => {
       document.querySelectorAll('.cls').forEach(x => x.classList.remove('sel'));
       el.classList.add('sel');
@@ -133,6 +141,7 @@ function handleFx(f) {
       S.texts.push({ at, text: 'NOVO NÍVEL!', color: '#ffe060', size: 20, t0: now, dur: 2000, ox: 0 });
       break;
     case 'say': S.bubbles.set(f.id, { text: f.text, until: Date.now() + 6500, at }); break;
+    case 'cast': S.attackAt.set(f.id, now + 320); break;
   }
 }
 
@@ -278,6 +287,7 @@ function setupInput() {
     document.activeElement && document.activeElement.blur && document.activeElement.blur();
     const w = screenToWorld(e.clientX, e.clientY);
     const hit = (x, y, r) => dist(w.x, w.y, x, y - 0.35) < r;
+    const hitTall = (x, y) => Math.abs(w.x - x) < 0.6 && w.y > y - 1.6 && w.y < y + 0.4;
     for (const m of S.mobs.values()) if (hit(m.x, m.y, S.defs.mobs[m.type].size + 0.3)) { S.target = m.id; return; }
     for (const n of allNpcs()) {
       if (hit(n.x, n.y, 0.7)) {
@@ -287,7 +297,7 @@ function setupInput() {
         return;
       }
     }
-    for (const p of S.players.values()) if (p.id !== S.myId && hit(p.x, p.y, 0.6)) { S.target = p.id; return; }
+    for (const p of S.players.values()) if (p.id !== S.myId && hitTall(p.x, p.y)) { S.target = p.id; return; }
     for (const n of S.nodes.values()) {
       if (n.avail && dist(w.x, w.y, n.x, n.y) < 0.7) {
         if (dist(S.x, S.y, n.x, n.y) < 2) send({ t: 'gather', id: n.id });

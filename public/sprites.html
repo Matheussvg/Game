@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sprites de Valoria</title>
+<style>
+  body { margin: 0; background: #14110d; color: #f1e6cf; font: 14px "Trebuchet MS", system-ui, sans-serif; padding: 20px; }
+  h1 { color: #f0c050; margin: 0 0 4px; }
+  p { color: #b3a283; margin: 0 0 16px; }
+  .cls { display: flex; gap: 18px; align-items: center; margin-bottom: 14px; background: #241c12; border: 1px solid #8a6d3b; border-radius: 8px; padding: 10px 14px; flex-wrap: wrap; }
+  .cls h2 { width: 110px; margin: 0; font-size: 17px; }
+  .grp { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .grp small { color: #b3a283; }
+  .row { display: flex; gap: 4px; }
+  canvas { image-rendering: pixelated; background: #4f8a3a; border-radius: 4px; }
+  .live { background: #4f8a3a; }
+</style>
+</head>
+<body>
+<h1>Sprites das classes</h1>
+<p>Cada linha: frente, esquerda, direita e costas. Quadros: parado, passo 1, passo 2, ataque. Animação ao vivo à direita.</p>
+<div id="out"></div>
+<script type="module">
+import { getSprite, walkFrame, SW, SH, SCALE } from './js/sprites.js';
+const NAMES = { guerreiro: 'Guerreiro', mago: 'Mago', cacador: 'Caçador', sacerdote: 'Sacerdote' };
+const DIRS = [['Frente', 0], ['Esquerda', 1], ['Direita', 2], ['Costas', 3]];
+const Z = 2;
+const out = document.getElementById('out');
+const lives = [];
+for (const [cls, name] of Object.entries(NAMES)) {
+  const d = document.createElement('div');
+  d.className = 'cls';
+  d.innerHTML = `<h2>${name}</h2>`;
+  for (const [label, dir] of DIRS) {
+    const g = document.createElement('div'); g.className = 'grp';
+    const r = document.createElement('div'); r.className = 'row';
+    for (let f = 0; f < 4; f++) {
+      const c = document.createElement('canvas');
+      c.width = SW * SCALE * Z; c.height = SH * SCALE * Z;
+      const x = c.getContext('2d'); x.imageSmoothingEnabled = false;
+      x.drawImage(getSprite(cls, dir, f), 0, 0, c.width, c.height);
+      r.appendChild(c);
+    }
+    g.appendChild(r);
+    g.insertAdjacentHTML('beforeend', `<small>${label}</small>`);
+    d.appendChild(g);
+  }
+  const live = document.createElement('canvas');
+  live.width = SW * SCALE * Z * 2; live.height = SH * SCALE * Z;
+  live.className = 'live';
+  d.appendChild(live);
+  lives.push({ cls, c: live });
+  out.appendChild(d);
+}
+const t0 = performance.now();
+function tick(now) {
+  const t = (now - t0) / 1000;
+  for (const { cls, c } of lives) {
+    const x = c.getContext('2d'); x.imageSmoothingEnabled = false;
+    x.clearRect(0, 0, c.width, c.height);
+    const phase = Math.floor(t / 2) % 4;
+    const dir = [0, 2, 3, 1][phase];
+    const frame = (t % 2) > 1.6 ? 3 : walkFrame(t);
+    x.drawImage(getSprite(cls, dir, frame), c.width / 4, 0, SW * SCALE * Z, SH * SCALE * Z);
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
