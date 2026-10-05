@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reinos de Valoria</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E⚔️%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- Tela de entrada -->
+  <div id="login" class="overlay">
+    <div class="login-box">
+      <h1>⚔️ Reinos de Valoria</h1>
+      <p class="sub">Um MMORPG de aventura, ofício e política. Lute, trabalhe, debata — e conquiste o trono.</p>
+      <div class="row">
+        <input id="lname" placeholder="Nome do personagem" maxlength="16" autocomplete="username">
+        <input id="lpass" type="password" placeholder="Senha" maxlength="64" autocomplete="current-password">
+      </div>
+      <p class="hint">Novo por aqui? Escolha uma classe — sua conta será criada ao entrar.</p>
+      <div id="classes" class="classes"></div>
+      <button id="lbtn" class="big">Entrar em Valoria</button>
+      <div id="lerr" class="err"></div>
+    </div>
+  </div>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div id="pframe" class="frame"></div>
+    <div id="tframe" class="frame hidden"></div>
+    <div id="zone"></div>
+    <div id="phase"></div>
+    <div id="minimap-wrap"><canvas id="minimap" width="180" height="180"></canvas><div id="mmzone"></div></div>
+    <div id="menu">
+      <button data-open="char" title="Personagem (C)">🧙<span>C</span></button>
+      <button data-open="inv" title="Inventário (B)">🎒<span>B</span></button>
+      <button data-open="prof" title="Profissão (P)">⚒️<span>P</span></button>
+      <button data-open="quests" title="Missões e Tarefas (L)">📜<span>L</span></button>
+      <button data-open="pol" title="Política e Eleições (O)">👑<span>O</span></button>
+      <button data-open="map" title="Mapa do Mundo (M)">🗺️<span>M</span></button>
+      <button data-open="help" title="Ajuda (H)">❓<span>H</span></button>
+    </div>
+    <div id="castbar" class="hidden"><div class="fill"></div><span></span></div>
+    <div id="actionbar"></div>
+    <div id="xpbar"><div class="fill"></div><span></span></div>
+    <div id="chat">
+      <div id="chatlog"></div>
+      <div class="chatin">
+        <select id="chatch"><option value="l">Local</option><option value="g">Geral</option></select>
+        <input id="chatinput" maxlength="200" placeholder="Enter para conversar · /ajuda">
+      </div>
+    </div>
+    <div id="toasts"></div>
+    <div id="panel" class="hidden"><div class="ptitle"><span></span><button class="close" data-act="close">✕</button></div><div class="pbody"></div></div>
+    <div id="death" class="hidden"><h2>Você foi derrotado</h2><p></p></div>
+    <div id="tooltip" class="hidden"></div>
+  </div>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
