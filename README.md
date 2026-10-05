@@ -2,6 +2,8 @@
 
 MMORPG multiplayer no navegador, inspirado em World of Warcraft, com **classes de combate**, **profissões** que movem a economia e um **sistema político** completo: candidaturas, debates públicos, eleições, rei, impostos, decretos e petições para derrubar o soberano.
 
+![Reinos de Valoria](docs/screenshot.png)
+
 Tudo roda com Node.js + WebSocket no servidor e Canvas 2D no cliente. Não usa arquivos de imagem: os gráficos são desenhados por código.
 
 ## Como jogar
